@@ -89,11 +89,16 @@ This is not "another RAG demo." The differentiator is evaluation rigor — measu
   - Known issue: JNC 8 PDF has glyph-encoding garbling — revisit in Day 8-10 iteration
 
 ### Days 6–7 (Weekend 2) — Generation + Citations
-- [ ] Write citation-enforcing system prompt
-- [ ] Pydantic schema for structured response (answer + citations array)
-- [ ] Wire RAG chain in LlamaIndex
-- [ ] Implement out-of-scope refusal (low retrieval score → refuse)
-- [ ] Manual smoke test on 20 questions across Claude Sonnet 4.6 and Gemini 2.5 Pro
+- [x] Write citation-enforcing system prompt — `clinrag/prompts/system_v1.md`
+- [x] Pydantic schema for structured response — `clinrag/schema.py` (`LLMAnswer`)
+- [x] Wire RAG chain — `clinrag/generate.py` (LlamaIndex retrieval + Claude/Gemini
+      generation via native structured output); one corrective retry on bad citations
+- [x] Implement out-of-scope refusal — two gates: retrieval-score + LLM `answerable`
+- [x] Manual smoke test on 20 questions across Claude Sonnet 4.6 and Gemini 2.5 Pro
+  - Claude: 14/14 answered with clean citations, all 6 refusals correct
+  - Gemini: 14/14 answered, 6 refusals correct; 1 residual missing-inline-marker
+    case after retry — Gemini's citation discipline is weaker (a Day 8-10 finding)
+  - Gemini 2.5 Pro needed a raised output-token budget (thinking model)
 
 ### Days 8–10 (Weekdays) — **Evaluation** ⭐
 - [ ] Curate 40-question golden test set:
