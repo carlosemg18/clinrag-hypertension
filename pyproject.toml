@@ -33,7 +33,7 @@ dev = [
 ]
 
 [project.urls]
-Repository = "https://github.com/YOUR_USERNAME/clinrag-hypertension"
+Repository = "https://github.com/carlosemg18/clinrag-hypertension"
 
 [build-system]
 requires = ["hatchling"]

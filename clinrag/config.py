@@ -10,8 +10,9 @@ from dotenv import load_dotenv
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# Load .env from the repo root if present. Real environment variables win.
-load_dotenv(REPO_ROOT / ".env", override=False)
+# Load .env from the repo root. It is the project's source of truth and
+# overrides ambient environment variables (some shells pre-populate keys empty).
+load_dotenv(REPO_ROOT / ".env", override=True)
 
 # Silence the HuggingFace tokenizers fork warning during multi-process embedding.
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")

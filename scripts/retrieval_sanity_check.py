@@ -15,8 +15,14 @@ Usage:
 
 from __future__ import annotations
 
-from clinrag.config import SETTINGS
-from clinrag.retrieve import retrieve
+import sys
+from pathlib import Path
+
+# Make the script runnable directly (python scripts/...) without an install.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from clinrag.config import SETTINGS  # noqa: E402
+from clinrag.retrieve import retrieve  # noqa: E402
 
 # (question, expected_in_scope)
 QUESTIONS: list[tuple[str, bool]] = [
