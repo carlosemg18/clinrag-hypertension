@@ -1,0 +1,25 @@
+# Environment
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Project data artifacts
+data/corpus/*.pdf
+data/corpus/*.html
+data/lancedb/
+mlruns/
+mlartifacts/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
