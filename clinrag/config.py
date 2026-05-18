@@ -41,11 +41,17 @@ class Settings:
 
     claude_model: str = field(default_factory=lambda: os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6"))
     gemini_model: str = field(default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-2.5-pro"))
+
+    # Judge for RAGAS and adversarial scoring. A third model (not under test),
+    # so it does not grade its own outputs; Haiku also has higher rate limits.
+    judge_model: str = field(
+        default_factory=lambda: os.getenv("JUDGE_MODEL", "claude-haiku-4-5-20251001")
+    )
     embedding_model: str = field(
         default_factory=lambda: os.getenv("EMBEDDING_MODEL", "BAAI/bge-large-en-v1.5")
     )
 
-    top_k: int = field(default_factory=lambda: int(os.getenv("TOP_K", "5")))
+    top_k: int = field(default_factory=lambda: int(os.getenv("TOP_K", "8")))
     relevance_threshold: float = field(
         default_factory=lambda: float(os.getenv("RELEVANCE_THRESHOLD", "0.50"))
     )

@@ -101,14 +101,18 @@ This is not "another RAG demo." The differentiator is evaluation rigor — measu
   - Gemini 2.5 Pro needed a raised output-token budget (thinking model)
 
 ### Days 8–10 (Weekdays) — **Evaluation** ⭐
-- [ ] Curate 40-question golden test set:
-  - [ ] 25 in-scope (factual hypertension questions w/ reference docs)
-  - [ ] 10 out-of-scope (should refuse)
-  - [ ] 5 adversarial (questions designed to elicit hallucination)
-- [ ] RAGAS pipeline: faithfulness, answer_relevancy, context_precision, context_recall
-- [ ] Custom metrics: citation_accuracy, refusal_rate, hallucination_rate
-- [ ] Run full eval on Claude Sonnet 4.6 and Gemini 2.5 Pro, log to MLflow
-- [ ] Iterate prompts/chunking based on weakest metric
+- [x] Curate 40-question golden test set — `data/eval/golden_set.jsonl`
+  - [x] 25 in-scope (with reference doc_ids + ground-truth answers)
+  - [x] 10 out-of-scope (should refuse)
+  - [x] 5 adversarial (false-premise questions)
+- [x] RAGAS pipeline: faithfulness, answer_relevancy, context_precision, context_recall
+- [x] Custom metrics: citation_accuracy, hallucination_rate, refusal_rate, adversarial_pass
+- [x] Run full eval on Claude Sonnet 4.6 and Gemini 2.5 Pro, log to MLflow
+      (judge = Claude Haiku 4.5, a third model — no self-judging)
+- [x] Iterate on weakest metric — PyMuPDF parser (fixed JNC 8 glyph garbling),
+      top_k 5→8 (halved false refusals), whitespace-insensitive quote grounding
+  - Result: 7/9 metrics clear target; hallucination rate + context precision miss
+  - Full methodology, before/after, and failure modes in `docs/evaluation.md`
 
 ### Days 11–12 (Weekend 3) — UI + Deploy
 - [ ] Streamlit app with citation highlighting on hover

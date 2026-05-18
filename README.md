@@ -72,15 +72,18 @@ flowchart LR
 
 | Metric | Claude Sonnet 4.6 | Gemini 2.5 Pro | Target |
 |---|---|---|---|
-| Faithfulness (RAGAS) | _TBD_ | _TBD_ | > 0.85 |
-| Answer Relevancy | _TBD_ | _TBD_ | > 0.80 |
-| Context Precision | _TBD_ | _TBD_ | > 0.70 |
-| Context Recall | _TBD_ | _TBD_ | > 0.75 |
-| **Citation Accuracy** | _TBD_ | _TBD_ | > 0.90 |
-| **Hallucination Rate** | _TBD_ | _TBD_ | < 5% |
-| **Refusal Rate (OOS)** | _TBD_ | _TBD_ | > 95% |
+| Faithfulness (RAGAS) | 0.964 | 0.951 | > 0.85 |
+| Answer Relevancy | 0.927 | 0.928 | > 0.80 |
+| Context Precision | 0.696 | 0.703 | > 0.70 |
+| Context Recall | 0.927 | 0.906 | > 0.75 |
+| **Citation Accuracy** | 0.992 | 0.952 | > 0.90 |
+| **Hallucination Rate** | 8.3% | 12.0% | < 5% |
+| **Refusal Rate (OOS)** | 100% | 100% | > 95% |
+| **Adversarial Pass Rate** | 100% | 100% | > 90% |
 
-_[Comparison chart goes here once eval is complete]_
+Seven of nine metrics clear target for both models; hallucination rate and
+context precision do not. The honest numbers and the reasons are in
+[docs/evaluation.md](./docs/evaluation.md).
 
 ---
 
@@ -88,7 +91,7 @@ _[Comparison chart goes here once eval is complete]_
 
 | Layer | Tool |
 |---|---|
-| Document parsing | `pypdf`, `beautifulsoup4` |
+| Document parsing | `pymupdf`, `beautifulsoup4` |
 | Embeddings | `BAAI/bge-large-en-v1.5` |
 | Vector store | LanceDB |
 | RAG framework | LlamaIndex |
