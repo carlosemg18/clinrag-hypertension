@@ -10,9 +10,9 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import fitz  # pymupdf
 from bs4 import BeautifulSoup
 from llama_index.core import Document
-from pypdf import PdfReader
 
 from clinrag.config import PATHS
 
@@ -46,15 +46,19 @@ def _make_doc(text: str, metadata: dict[str, str]) -> Document:
 
 
 def parse_pdf(path: Path, row: dict[str, str]) -> list[Document]:
-    """One Document per page, with a 'p. N' locator."""
-    reader = PdfReader(str(path))
+    """One Document per page, with a 'p. N' locator.
+
+    PyMuPDF is used over pypdf because it resolves glyph encodings correctly;
+    pypdf emitted raw glyph codes for some guideline PDFs (e.g. JNC 8).
+    """
     docs: list[Document] = []
-    for page_num, page in enumerate(reader.pages, start=1):
-        text = (page.extract_text() or "").strip()
-        if len(text) < _MIN_TEXT_LEN:
-            continue
-        meta = _base_metadata(row) | {"location": f"p. {page_num}"}
-        docs.append(_make_doc(text, meta))
+    with fitz.open(str(path)) as doc:
+        for page_num in range(doc.page_count):
+            text = doc[page_num].get_text().strip()
+            if len(text) < _MIN_TEXT_LEN:
+                continue
+            meta = _base_metadata(row) | {"location": f"p. {page_num + 1}"}
+            docs.append(_make_doc(text, meta))
     return docs
 
 
