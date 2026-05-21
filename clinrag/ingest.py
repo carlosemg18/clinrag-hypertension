@@ -16,27 +16,15 @@ from collections import Counter
 import mlflow
 from llama_index.core import Settings, StorageContext, VectorStoreIndex
 from llama_index.core.node_parser import SentenceSplitter
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
 
 from clinrag.config import PATHS, SETTINGS
+from clinrag.embedding import build_embed_model
 from clinrag.parsing import load_corpus
 from clinrag.tracking import start_run
 
 CHUNK_SIZE = 512
 CHUNK_OVERLAP = 50
-
-# BGE-v1.5 retrieval works best when queries carry this instruction prefix.
-# Passages (the corpus chunks) are embedded without it.
-BGE_QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages:"
-
-
-def build_embed_model() -> HuggingFaceEmbedding:
-    """The BGE-large embedding model, shared by ingestion and retrieval."""
-    return HuggingFaceEmbedding(
-        model_name=SETTINGS.embedding_model,
-        query_instruction=BGE_QUERY_INSTRUCTION,
-    )
 
 
 def build_index() -> VectorStoreIndex:
