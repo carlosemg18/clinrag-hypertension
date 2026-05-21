@@ -12,7 +12,7 @@ from llama_index.core.schema import NodeWithScore
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
 
 from clinrag.config import PATHS, SETTINGS
-from clinrag.ingest import build_embed_model
+from clinrag.embedding import build_embed_model
 
 _index: VectorStoreIndex | None = None
 

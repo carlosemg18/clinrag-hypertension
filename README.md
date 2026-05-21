@@ -64,6 +64,8 @@ flowchart LR
     end
 ```
 
+Full component breakdown and design decisions: [docs/architecture.md](./docs/architecture.md).
+
 ---
 
 ## Evaluation Results
@@ -130,6 +132,8 @@ python -m clinrag.evaluate --model claude
 python -m clinrag.evaluate --model gemini
 mlflow ui  # view results
 ```
+
+Deploying the app to a HuggingFace Space: see [docs/deploy.md](./docs/deploy.md).
 
 ---
 

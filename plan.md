@@ -115,11 +115,14 @@ This is not "another RAG demo." The differentiator is evaluation rigor — measu
   - Full methodology, before/after, and failure modes in `docs/evaluation.md`
 
 ### Days 11–12 (Weekend 3) — UI + Deploy
-- [ ] Streamlit app with citation highlighting on hover
-- [ ] Model selector (toggle Claude/GPT)
-- [ ] Eval results page (charts from MLflow data)
-- [ ] Deploy to HuggingFace Spaces
-- [ ] Architecture diagram (Mermaid)
+- [x] Streamlit app with citation highlighting on hover — `app/streamlit_app.py`
+- [x] Model selector (toggle Claude/Gemini) + retrieval debug panel
+- [x] Eval results page (table + comparison chart from results CSVs)
+- [~] Deploy to HuggingFace Spaces — app is deploy-ready (`requirements.txt`,
+      `docs/deploy.md`); push needs the user's HuggingFace account
+- [x] Architecture diagram (Mermaid) — `docs/architecture.md`
+- Refactor: extracted `clinrag/embedding.py` so the app/retrieval no longer
+  import the heavier mlflow/ragas stack
 
 ### Days 13–14 (Weekdays) — Polish
 - [ ] Final README pass (problem, approach, results, limitations)
