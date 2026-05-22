@@ -4,9 +4,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![HuggingFace Spaces](https://img.shields.io/badge/🤗-Live%20Demo-blue)](https://huggingface.co/spaces/carlosemg18/clinrag-htn)
+[![HuggingFace Spaces](https://img.shields.io/badge/🤗-Live%20Demo-blue)](https://huggingface.co/spaces/cemg19/clinrag-htn)
 
-**🔗 [Live Demo](https://huggingface.co/spaces/carlosemg18/clinrag-htn)** · **🎥 [3-min Walkthrough](https://loom.com/PLACEHOLDER)** · **📊 [Evaluation Report](./docs/evaluation.md)**
+**🔗 [Live Demo](https://huggingface.co/spaces/cemg19/clinrag-htn)** · **🎥 [3-min Walkthrough](https://loom.com/PLACEHOLDER)** · **📊 [Evaluation Report](./docs/evaluation.md)**
 
 ---
 

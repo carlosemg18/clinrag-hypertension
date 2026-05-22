@@ -59,14 +59,14 @@ with an **access token** instead (think of it as an app-specific password).
 
 1. Go to https://huggingface.co/new-space
 2. Fill in:
-   - **Owner**: your username (`carlosemg18`)
+   - **Owner**: your username (`cemg19`)
    - **Space name**: `clinrag-htn` (this becomes part of the URL)
    - **License**: MIT
    - **SDK**: select **Streamlit**
    - **Hardware**: **CPU basic** (free) — enough for this app
    - **Visibility**: Public
 3. Click **Create Space**. You now have an empty repo at
-   `https://huggingface.co/spaces/carlosemg18/clinrag-htn`.
+   `https://huggingface.co/spaces/cemg19/clinrag-htn`.
 
 ---
 
@@ -77,7 +77,7 @@ different repo from your GitHub repo.
 
 ```bash
 cd ..                                  # leave the clinrag-hypertension folder
-git clone https://huggingface.co/spaces/carlosemg18/clinrag-htn
+git clone https://huggingface.co/spaces/cemg19/clinrag-htn
 cd clinrag-htn
 ```
 
@@ -178,7 +178,7 @@ You need to authenticate with the token from Step 1. The simplest way is to put
 it in the remote URL once:
 
 ```bash
-git remote set-url origin https://carlosemg18:hf_YOUR_TOKEN@huggingface.co/spaces/carlosemg18/clinrag-htn
+git remote set-url origin https://cemg19:hf_YOUR_TOKEN@huggingface.co/spaces/cemg19/clinrag-htn
 
 git add -A
 git commit -m "Deploy ClinCite-HTN Streamlit app"
