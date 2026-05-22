@@ -73,6 +73,11 @@ as the judge, and Haiku's higher rate limits make the ~360-call eval tractable.
 Seven of nine metrics clear their targets for both models. Two do not — see
 *Where it falls short* below.
 
+![Model comparison on RAGAS + citation accuracy](./eval_comparison.png)
+
+*Bars are the two models under test; dashed lines are the targets. Regenerate
+with `python scripts/plot_eval.py`.*
+
 **Claude vs. Gemini.** The two models are close. Claude leads on faithfulness
 (0.964 vs 0.951), citation accuracy (0.992 vs 0.952), and hallucination rate
 (0.083 vs 0.120) — i.e. on citation discipline, the project's core thesis.

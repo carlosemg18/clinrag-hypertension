@@ -87,6 +87,8 @@ Seven of nine metrics clear target for both models; hallucination rate and
 context precision do not. The honest numbers and the reasons are in
 [docs/evaluation.md](./docs/evaluation.md).
 
+![Model comparison on RAGAS + citation accuracy](./docs/eval_comparison.png)
+
 ---
 
 ## Tech Stack
@@ -97,8 +99,8 @@ context precision do not. The honest numbers and the reasons are in
 | Embeddings | `BAAI/bge-large-en-v1.5` |
 | Vector store | LanceDB |
 | RAG framework | LlamaIndex |
-| LLMs | Claude Sonnet 4.6, Gemini 2.5 Pro |
-| Evaluation | RAGAS + custom metrics |
+| LLMs (under test) | Claude Sonnet 4.6, Gemini 2.5 Pro |
+| Evaluation | RAGAS + custom metrics (judge: Claude Haiku 4.5) |
 | Experiment tracking | MLflow |
 | UI | Streamlit |
 | Deployment | HuggingFace Spaces |
@@ -142,23 +144,38 @@ Deploying the app to a HuggingFace Space: see [docs/deploy.md](./docs/deploy.md)
 ```
 clinrag-hypertension/
 ├── app/
-│   └── streamlit_app.py       # Demo UI
+│   └── streamlit_app.py       # Demo UI (Ask + Evaluation views)
 ├── clinrag/
-│   ├── ingest.py              # Corpus → vector store
-│   ├── retrieve.py            # Retrieval logic + scoring
+│   ├── config.py              # Paths + env-driven settings
+│   ├── parsing.py             # PDF (PyMuPDF) / HTML (BeautifulSoup) → text
+│   ├── embedding.py           # Shared BGE-large embedding model
+│   ├── ingest.py              # Corpus → LanceDB
+│   ├── retrieve.py            # Retrieval + out-of-scope relevance gate
+│   ├── llm.py                 # Claude + Gemini backends
+│   ├── schema.py              # Structured response contract
 │   ├── generate.py            # RAG chain with citation enforcement
+│   ├── metrics.py             # Custom eval metrics
 │   ├── evaluate.py            # RAGAS + custom metrics runner
-│   └── prompts/               # System prompts (versioned)
+│   ├── tracking.py            # MLflow setup
+│   └── prompts/
+│       └── system_v1.md       # Citation-enforcing system prompt
 ├── data/
-│   ├── corpus/                # Source guideline PDFs
+│   ├── corpus/                # Source guideline PDFs/HTML (git-ignored)
 │   ├── corpus_manifest.csv    # Document inventory + provenance
 │   └── eval/
-│       └── golden_set.jsonl   # 40-question test set
+│       ├── golden_set.jsonl   # 40-question test set
+│       └── results_*.csv      # Per-question evaluation results
+├── scripts/
+│   ├── download_corpus.py     # Fetch the corpus from the manifest
+│   ├── retrieval_sanity_check.py
+│   └── generation_smoke_test.py
 ├── docs/
-│   ├── corpus.md              # Corpus documentation
+│   ├── corpus.md              # Corpus provenance + licensing
 │   ├── evaluation.md          # Eval methodology + results writeup
-│   └── architecture.md        # System design decisions
-├── tests/
+│   ├── architecture.md        # System design + diagram
+│   └── deploy.md              # HuggingFace Spaces deploy guide
+├── requirements.txt           # Inference deps (for the Space)
+├── pyproject.toml             # Full project + dev deps
 └── README.md
 ```
 
@@ -167,24 +184,28 @@ clinrag-hypertension/
 ## How It Works
 
 ### 1. Corpus Curation
-~75–100 documents from authoritative sources: ACC/AHA, USPSTF, JNC 8, NICE NG136, CDC, and WHO. Every document is tracked in `data/corpus_manifest.csv` with source URL, publication date, and license.
+Nine source documents from six authoritative bodies — ACC/AHA, JNC 8, NICE NG136, USPSTF, WHO, and CDC — parsed and split into ~1,600 retrievable chunks. Every document is tracked in `data/corpus_manifest.csv` with source URL, publication date, and license. See [docs/corpus.md](./docs/corpus.md).
 
 ### 2. Citation Enforcement
-The generator is constrained to return a Pydantic-validated structure: `{answer: str, citations: list[Citation]}`. Each citation references a `doc_id` from the manifest. Responses without valid citations fail validation and are regenerated.
+The generator must return a Pydantic-validated structure: `{answerable: bool, answer: str, citations: list[Citation]}`. A citation is valid only if its `doc_id` is one of the retrieved chunks. If the first attempt cites an unknown `doc_id`, cites nothing, or omits the inline `[doc_id]` marker, one corrective retry is issued before the response is returned.
 
 ### 3. Out-of-Scope Refusal
-If the top-k retrieval scores fall below a calibrated threshold, the system refuses rather than answering. Threshold was tuned on the out-of-scope subset of the golden test set.
+Two refusal paths: (1) if the top retrieved chunk scores below the relevance threshold (0.50, set from the observed in-scope vs. out-of-scope score separation), the question is out of scope and no LLM call is made; (2) if relevant-looking chunks come back but do not actually contain the answer, the model returns `answerable=false` and the response is treated as a refusal rather than a guess.
 
 ### 4. Evaluation
-40-question golden test set: 25 in-scope factual, 10 out-of-scope, 5 adversarial. Scored on standard RAGAS metrics plus three custom metrics (citation accuracy, hallucination rate, refusal rate). Full methodology in [docs/evaluation.md](./docs/evaluation.md).
+40-question golden test set (25 in-scope, 10 out-of-scope, 5 adversarial), scored with RAGAS (faithfulness, answer relevancy, context precision/recall) plus custom metrics (citation accuracy, hallucination rate, refusal rate, adversarial pass rate). The judge is Claude Haiku 4.5 — a third model, not under test. Full methodology, before/after iteration, and failure modes in [docs/evaluation.md](./docs/evaluation.md).
 
 ---
 
 ## Limitations
 
-- **Domain**: hypertension only. Out-of-domain refusal is by design, not a bug.
-- **Corpus age**: guidelines are dated; recommendations evolve. Each citation includes publication date.
-- **Adversarial robustness**: tested against 5 adversarial cases but not exhaustively red-teamed.
+- **Hallucination rate misses its target** (8.3% Claude / 12.0% Gemini vs. < 5%). The metric is strict — one untraceable citation quote flags the whole response. Reported honestly rather than tuned away; details in [docs/evaluation.md](./docs/evaluation.md).
+- **Recall/precision trade-off**: raising `top_k` to 8 cut false refusals but nudged context precision to the target line (Claude 0.696). A reranker would likely recover it.
+- **Small test set**: 40 questions means wide confidence intervals — treat small differences between models as noise.
+- **Single judge**: one judge model (Haiku 4.5); a panel would be more robust. Ground-truth answers were author-written from the guidelines.
+- **Corpus quality varies**: the JNC 8 PDF is the weakest source even after switching to PyMuPDF (broken space encoding on some pages).
+- **Corpus age**: guidelines are dated; recommendations evolve. Each citation carries its publication date.
+- **Domain**: hypertension only — out-of-domain refusal is by design, not a bug.
 - **Not a medical device**: see disclaimer above.
 
 ---

@@ -125,11 +125,13 @@ This is not "another RAG demo." The differentiator is evaluation rigor — measu
   import the heavier mlflow/ragas stack
 
 ### Days 13–14 (Weekdays) — Polish
-- [ ] Final README pass (problem, approach, results, limitations)
-- [ ] Eval writeup with charts in `docs/evaluation.md`
-- [ ] 3-minute Loom walkthrough
-- [ ] Tag v1.0.0 release
-- [ ] Add to portfolio website queue
+- [x] Final README pass — fixed structure tree, How-It-Works accuracy, real
+      measured limitations, tech stack (judge model)
+- [x] Eval writeup with charts in `docs/evaluation.md` — added comparison chart
+      (`scripts/plot_eval.py` → `docs/eval_comparison.png`)
+- [ ] 3-minute Loom walkthrough — to record (needs the live app)
+- [ ] Tag v1.0.0 release — after the Space is live + Loom recorded (Definition of Done)
+- [ ] Add to portfolio website queue — your task
 
 ---
 

@@ -22,8 +22,19 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-# Make `clinrag` importable when Streamlit runs this file directly.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Make the `clinrag` package importable no matter where the host places this
+# file (repo root, an app/ subdir, or a src/ subdir, as on HuggingFace Spaces):
+# walk up from here until we find the directory that contains the package.
+_HERE = Path(__file__).resolve()
+for _candidate in (_HERE.parent, *_HERE.parents):
+    if (_candidate / "clinrag" / "__init__.py").exists():
+        sys.path.insert(0, str(_candidate))
+        break
+else:
+    raise ModuleNotFoundError(
+        "Could not find the 'clinrag' package near "
+        f"{_HERE}. Make sure the clinrag/ folder is uploaded alongside this app."
+    )
 
 from clinrag.config import PATHS, SETTINGS  # noqa: E402
 
